@@ -1,64 +1,70 @@
 import sys
 import json
+import os
 
-running = True
+# Use a constant for the filename to avoid typos
+DATABASE_FILE = "auth.json"
 
-with open("auth.json", "r") as file:
-    data = json.load(file)
+def load_data():
+    try:
+        with open(DATABASE_FILE, "r") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+        print(f"Error: {DATABASE_FILE} is corrupted.")
+        sys.exit(1)
 
-
-def login_auth():
-    logged_in = False
+def login_auth(data):
     login_attempts = 0
+    max_attempts = 3
 
-    while not logged_in:
+    while login_attempts < max_attempts:
+        username = input("Username: ").strip()
+        password = input("Password : ").strip()
         
-        username = input("Username: ")
-        password = input("Password : ")
+        user_info = data.get("users", {}).get(username)
 
-        if login_attempts >= 2:
-            print("************************************************")
-            print("You've been locked out (over 3 attempted logins)")
-            print("************************************************")
-            sys.exit(0)
-        
-        elif password != "password":
+        if not user_info:
             print("****************************************")
-            print("Either wrong useranme or wrong password")
-            print("You have", {2-login_attempts},"attempts left")
+            print("This User does not exist")
             print("****************************************")
             login_attempts += 1
-            continue
-
-        elif username == "admin" and password == "password":
+        elif user_info["password"] == password:
             print("**************************")
-            print("Logged in to " , {username})
+            print(f"Logged in to {username}")
             print("**************************")
-            logged_in = True
-            break
+            return username  # Return the logged-in user for use in main
+        else: 
+            login_attempts += 1
+            remaining = max_attempts - login_attempts
+            print("****************************************")
+            print("Either wrong username or wrong password")
+            if remaining > 0:
+                print(f"You have {remaining} attempts left")
+            print("****************************************")
 
-
-
+    print("************************************************")
+    print("You've been locked out (over 3 attempted logins)")
+    print("************************************************")
+    sys.exit(0)
 
 def main():
+    data = load_data()
 
     print("***************************************")
-    print("Wecome to the Econmony Simultor Program")
+    print("Welcome to the Economy Simulator Program")
     print("***************************************\n")
 
-    login_auth()
+    # Capture the username so the rest of the program knows who is playing
+    current_user = login_auth(data)
 
-
+    running = True
     while running:
-            
-        instruction = input("# ")
+        instruction = input(f"[{current_user}] # ").lower().strip()
 
-        if instruction == "stop":
-            break
-        else:
-            continue
-
-
+        if instruction == "stop" or instruction == "exit":
+            running = False
+        elif instruction == "help":
+            print("Available commands: stop, exit, help")
 
 if __name__ == "__main__":
     main()
