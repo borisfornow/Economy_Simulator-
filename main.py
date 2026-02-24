@@ -1,9 +1,20 @@
 import sys
 import json
 import os
+import bcrypt
 
 # Use a constant for the filename to avoid typos
 DATABASE_FILE = "auth.json"
+
+
+def hash_password(pw):
+    pw_bytes = pw.encode('utf-8')
+    
+    s = bcrypt.gensalt()
+    h = bcrypt.hashpw(pw_bytes, s)
+    
+    return h.decode('utf-8')
+
 
 def load_data():
     try:
