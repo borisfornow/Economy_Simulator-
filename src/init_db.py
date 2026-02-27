@@ -34,25 +34,19 @@ def create_data():
         }
 }
 
-    if not os.path.exists(DATABASE_FILE):
-        try:
-            with open(DATABASE_FILE, "w") as file:
-                json.dumps(data_dict, file , indent=4)
-        except Exception as e:
-            print(f"an error occered: {e}")
             
 
-    # # 2. Check if the file exists
-    # if not os.path.exists(DATABASE_FILE):
-    #     try:
-    #         with open(DATABASE_FILE, 'w') as file:
-    #             # 3. Convert to string and write inside the same block
-    #             json.dump(data_dict, file, indent=4)
-    #             print(f"File '{DATABASE_FILE}' created successfully.")
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    # else:
-    #     print("Database populated already.")
+    # 2. Check if the file exists
+    if not os.path.exists(DATABASE_FILE):
+        try:
+            with open(DATABASE_FILE, 'w') as file:
+                # 3. Convert to string and write inside the same block
+                json.dump(data_dict, file, indent=4)
+                print(f"File '{DATABASE_FILE}' created successfully.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    else:
+        print("Database populated already.")
 
 def init_database():
     create_data()
