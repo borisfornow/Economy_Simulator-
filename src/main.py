@@ -1,28 +1,42 @@
 import sys
-import json
-import os
-import bcrypt
 import auth
-
-
+import init_db
 
 def main():
+    # 1. Ensure the environment is ready
+    init_db.init_database()
 
-    print("***************************************")
+    print("*****************************************")
     print("Welcome to the Economy Simulator Program")
-    print("***************************************\n")
+    print("*****************************************\n")
 
-    # Capture the username so the rest of the program knows who is playing
-    current_user = auth.auth_main()
+    # 2. Force a valid login before entering the game loop
+    current_user = None
+    while not current_user:
+        current_user = auth.auth_main()
+        if not current_user:
+            print("Login failed or cancelled. Please try again.")
 
+    # 3. Game Loop
     running = True
+    print(f"\nWelcome back, {current_user}. Type 'help' for commands.\n")
+    
     while running:
-        instruction = input(f"[{current_user}] $ ").lower().strip()
+        # Using a distinct prompt style
+        cmd = input(f"[{current_user.upper()}] $ ").lower().strip()
 
-        if instruction == "stop" or instruction == "exit":
+        if cmd in ["stop", "exit", "quit"]:
+            print("Saving data and exiting...")
             running = False
-        elif instruction == "help":
-            print("Available commands: stop, exit, help")
+        elif cmd == "help":
+            print("\n--- Available Commands ---")
+            print("status : Check your current balance and job")
+            print("help   : Show this menu")
+            print("exit   : Close the program\n")
+        elif cmd == "status":
+            init_db.get_data_dict(current_user)
+        else:
+            print(f"Unknown command: '{cmd}'")
 
 if __name__ == "__main__":
     main()
