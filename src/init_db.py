@@ -82,7 +82,6 @@ def update_data(target_id, **kwargs):
     except Exception as e:
         print(f"Error updating database: {e}")
 
-# Add this to init_db.py
 def add_employee_to_company(company_id, user_id):
     try:
         with open(DATABASE_FILE, "r") as file:
