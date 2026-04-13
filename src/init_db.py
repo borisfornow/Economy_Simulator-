@@ -1,8 +1,7 @@
 import json
 import os
 import random
-import Entities
-from Entities import Users, Companies, Banks
+import Users, Companies, Banks
 
 DATABASE_FILE = "auth.json"
 JOB_PROBABILITY = 0.90
@@ -21,7 +20,7 @@ def create_initial_structure():
             "0": {
                 "name": "admin",
                 "password": "password",
-                "balance": 10000000,
+                "balance": "R{10000000}",
                 "is_admin": True,
                 "employed_by": None
             }
@@ -48,7 +47,7 @@ def populate_database(data):
         company_commodity = random.choice(product_list) if product_list else "general"
         if product_list: product_list.remove(company_commodity)
 
-        company = Entities.Companies(
+        company = Companies.Companies(
             name=f"Enterprise_{comp_id}",
             owner=random.choice(user_ids),
             vault=STARTING_CAPITAL,
@@ -76,11 +75,11 @@ def populate_database(data):
         has_job = random.random() < JOB_PROBABILITY
         assigned_job_id = random.choice(company_ids) if (has_job and company_ids) else None
         
-        user = Entities.Users(
+        user = Users.Users(
             id=target_id, 
             name=f"citizen_{target_id}", 
             password="password", 
-            balance=100, 
+            balance=random.randint(50, 100), 
             is_admin=False, 
             employed_by=assigned_job_id
         )
@@ -89,9 +88,12 @@ def populate_database(data):
         data["users"][target_id] = {
             "name": user.name,
             "password": user.password,
-            "balance": user.balance,
+            "balance": f"R{user.balance}",
             "is_admin": user.is_admin,
-            "employed_by": user.employed_by
+            "employed_by": user.employed_by,
+            "health": f"{user.health}%",
+            "energy": f"{user.energy}e",
+            "luxury": f"{user.luxury}l"
         }
 
         # Link employee to company in the JSON structure
@@ -151,6 +153,20 @@ def add_employee_to_company(company_id, user_id):
             json.dump(data, file, indent=4)
     except Exception as e:
         print(f"Error linking employee: {e}")
+
+def remove_user_from_data(user_id):
+    """Removes a user from the JSON data."""
+    try:
+        with open(DATABASE_FILE, "r") as file:
+            data = json.load(file)
+        
+        if user_id in data["users"]:
+            del data["users"][user_id]
+        
+        with open(DATABASE_FILE, "w") as file:
+            json.dump(data, file, indent=4)
+    except Exception as e:
+        print(f"Error removing user: {e}")
 
 def init_database():
     """Initializes database file and populates global registries."""
