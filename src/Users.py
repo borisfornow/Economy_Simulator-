@@ -1,6 +1,6 @@
 import random
 
-class Users:
+class User:
     def __init__(self, id, name, password, balance, is_admin, employed_by):
         self.id = id
         self.name = name

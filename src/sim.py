@@ -1,15 +1,17 @@
-import sys
 import auth
 import init_db
 import Users, Companies, Banks
-from init_db import user_registry, company_registry, bank_registry
+from init_db import user_registry, company_registry
 
 def sim():
+    # 1. Initialize data structures
+    init_db.init_database()
+
     print("*****************************************")
     print("Welcome to the Economy Simulator Program")
     print("*****************************************\n")
 
-    # 2. Force a valid login before entering the game loop
+    # 2. Force a valid login
     current_user = None
     while not current_user:
         current_user = auth.auth_main()
@@ -18,27 +20,31 @@ def sim():
 
     # 3. Game Loop
     running = True
-    print(f"\nWelcome back, {current_user}. Type 'help' for commands.\n")
+    print(f"\nWelcome back, {current_user.name}. Type 'help' for commands.\n")
     
     while running:
-
+        # World Tick: Death and Cleanup
         for user_id in list(user_registry.keys()): 
             user = user_registry[user_id]
     
-            # Run the check
             if user.death_check():
-                # 1. Remove from the in-memory registry
+                # Remove from in-memory registry
                 del user_registry[user_id]
         
-                # 2. Remove from the JSON data store
+                # Remove from JSON data store
                 init_db.remove_user_from_data(user_id)
 
-                # 3. Remove from their company's employee list
-                if user.employed_by:
+                # Remove from company's employee list if applicable
+                if user.employed_by and user.employed_by in company_registry:
                     company_registry[user.employed_by].employees.remove(user_id)
+                
+                # Exit if the active player dies
+                if user_id == current_user.id:
+                    print("Game Over: Your character has died.")
+                    return
 
-        # Using a distinct prompt style
-        cmd = input(f"[{current_user.upper()}] $ ").lower().strip()
+        # User Input
+        cmd = input(f"[{current_user.name.upper()}] $ ").lower().strip()
 
         if cmd in ["stop", "exit", "quit"]:
             print("Saving data and exiting...")
@@ -49,6 +55,15 @@ def sim():
             print("help   : Show this menu")
             print("exit   : Close the program\n")
         elif cmd == "status":
-            init_db.get_data_dict(current_user)
+            # Accessing stats directly from the object
+            print(f"\n--- {current_user.name}'s Stats ---")
+            print(f"Balance: {current_user.balance}")
+            print(f"Health:  {current_user.health}")
+            print(f"Energy:  {current_user.energy}")
+            print(f"Luxury:  {current_user.luxury}")
+            print(f"Job:     {current_user.employed_by}\n")
         else:
             print(f"Unknown command: '{cmd}'")
+
+if __name__ == "__main__":
+    sim()

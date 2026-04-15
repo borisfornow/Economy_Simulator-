@@ -1,4 +1,4 @@
-class Companies():
+class Company():
     def __init__(self, name, owner, vault, employees, salary, commodity, production_rate):
         self.name = name 
         self.owner = owner

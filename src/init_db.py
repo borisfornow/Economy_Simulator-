@@ -20,9 +20,12 @@ def create_initial_structure():
             "0": {
                 "name": "admin",
                 "password": "password",
-                "balance": "R{10000000}",
+                "balance": 10000000, # Keep as int for math
                 "is_admin": True,
-                "employed_by": None
+                "employed_by": None,
+                "health": 100,
+                "energy": 10,
+                "luxury": 5
             }
         },
         "companies": {},
@@ -33,7 +36,7 @@ def create_initial_structure():
     }
 
 def populate_database(data):
-    """Generates companies and citizens into the provided data dictionary and memory."""
+    """Generates companies and citizens into the provided dictionary and memory."""
     global user_registry, company_registry
     
     product_list = ["health", "energy", "luxury"]
@@ -42,31 +45,21 @@ def populate_database(data):
     # 1. Generate Companies
     for i in range(1, COMPANY_COUNT + 1):
         comp_id = f"CO-{i}"
-        
-        # Ensure we don't crash if product_list is empty
-        company_commodity = random.choice(product_list) if product_list else "general"
-        if product_list: product_list.remove(company_commodity)
+        commodity = random.choice(product_list) if product_list else "general"
+        if product_list: product_list.remove(commodity)
 
-        company = Companies.Companies(
+        company = Companies.Company(
             name=f"Enterprise_{comp_id}",
             owner=random.choice(user_ids),
             vault=STARTING_CAPITAL,
             employees=[],
             salary=random.randint(40, 80),
-            commodity=company_commodity,
+            commodity=commodity,
             production_rate=random.randint(1, 5)
         )
         
         company_registry[comp_id] = company
-        data["companies"][comp_id] = {
-            "name": company.name,
-            "owner": company.owner,
-            "vault": company.vault,
-            "employees": company.employees,
-            "salary": company.salary,
-            "commodity": company.commodity,
-            "production_rate": company.production_rate
-        }
+        data["companies"][comp_id] = vars(company) # vars() converts object to dict
 
     # 2. Generate Citizens
     company_ids = list(data["companies"].keys())
@@ -75,7 +68,7 @@ def populate_database(data):
         has_job = random.random() < JOB_PROBABILITY
         assigned_job_id = random.choice(company_ids) if (has_job and company_ids) else None
         
-        user = Users.Users(
+        user = Users.User(
             id=target_id, 
             name=f"citizen_{target_id}", 
             password="password", 
@@ -88,21 +81,33 @@ def populate_database(data):
         data["users"][target_id] = {
             "name": user.name,
             "password": user.password,
-            "balance": f"R{user.balance}",
+            "balance": user.balance, # Stored as int
             "is_admin": user.is_admin,
             "employed_by": user.employed_by,
-            "health": f"{user.health}%",
-            "energy": f"{user.energy}e",
-            "luxury": f"{user.luxury}l"
+            "health": user.health,
+            "energy": user.energy,
+            "luxury": user.luxury
         }
 
-        # Link employee to company in the JSON structure
         if user.employed_by:
-            data["companies"][user.employed_by]["employees"].append(user.id)
-            # Also update the in-memory company object
-            company_registry[user.employed_by].employees.append(user.id)
-    
+            company_data = data["companies"][user.employed_by]
+            # Check JSON structure
+            if user.id not in company_data["employees"]:
+                company_data["employees"].append(user.id)
+            
+            # Check in-memory object
+            if user.id not in company_registry[user.employed_by].employees:
+                company_registry[user.employed_by].employees.append(user.id)
+            
     return data
+
+def save_to_disk(data):
+    """Helper to write the current data state to JSON."""
+    try:
+        with open(DATABASE_FILE, "w") as file:
+            json.dump(data, file, indent=4)
+    except Exception as e:
+        print(f"Save error: {e}")
 
 def update_data(target_id, **kwargs):
     """Updates a user's data in JSON and syncs the in-memory object."""
@@ -111,101 +116,62 @@ def update_data(target_id, **kwargs):
         with open(DATABASE_FILE, "r") as file:
             data = json.load(file)
             
-        if target_id not in data["users"]:
-            data["users"][target_id] = {}
-
-        for key, value in kwargs.items():
-            data["users"][target_id][key] = value
+        if target_id in data["users"]:
+            for key, value in kwargs.items():
+                data["users"][target_id][key] = value
             
-        with open(DATABASE_FILE, "w") as file:
-            json.dump(data, file, indent=4)
-        
-        # Update/Create the in-memory object
-        u = data["users"][target_id]
-        user_registry[target_id] = Users(
-            id=target_id,
-            name=u.get("name", ""),
-            password=u.get("password", ""),
-            balance=u.get("balance", 0),
-            is_admin=u.get("is_admin", False),
-            employed_by=u.get("employed_by", None)
-        )
-        
+            save_to_disk(data)
             
+            # Re-sync object
+            u = data["users"][target_id]
+            user_registry[target_id] = Entities.Users(
+                target_id, u['name'], u['password'], u['balance'], 
+                u['is_admin'], u['employed_by']
+            )
     except Exception as e:
-        print(f"Error updating database: {e}")
-
-def add_employee_to_company(company_id, user_id):
-    """Links an employee to a company in the database."""
-    try:
-        with open(DATABASE_FILE, "r") as file:
-            data = json.load(file)
-        
-        if company_id in data["companies"]:
-            if user_id not in data["companies"][company_id]["employees"]:
-                data["companies"][company_id]["employees"].append(user_id)
-                
-                # If using in-memory registry, sync it here too
-                if company_id in company_registry:
-                    company_registry[company_id].employees.append(user_id)
-        
-        with open(DATABASE_FILE, "w") as file:
-            json.dump(data, file, indent=4)
-    except Exception as e:
-        print(f"Error linking employee: {e}")
+        print(f"Update error: {e}")
 
 def remove_user_from_data(user_id):
-    """Removes a user from the JSON data."""
+    """Removes a user from memory and disk."""
+    global user_registry
     try:
         with open(DATABASE_FILE, "r") as file:
             data = json.load(file)
         
         if user_id in data["users"]:
+            # Remove from company list first
+            emp_by = data["users"][user_id].get("employed_by")
+            if emp_by and emp_by in data["companies"]:
+                data["companies"][emp_by]["employees"].remove(user_id)
+            
             del data["users"][user_id]
-        
-        with open(DATABASE_FILE, "w") as file:
-            json.dump(data, file, indent=4)
+            if user_id in user_registry: del user_registry[user_id]
+            
+            save_to_disk(data)
     except Exception as e:
-        print(f"Error removing user: {e}")
+        print(f"Removal error: {e}")
 
 def init_database():
-    """Initializes database file and populates global registries."""
+    """Initializes or loads the database."""
     global user_registry, company_registry
 
     if not os.path.exists(DATABASE_FILE):
-        print("No database found. Initializing...")
-        data = create_initial_structure()
-        data = populate_database(data)
-        
-        try:
-            with open(DATABASE_FILE, 'w') as file:
-                json.dump(data, file, indent=4)
-                print(f"Database created: {CITIZEN_COUNT} citizens, {COMPANY_COUNT} companies.")
-        except Exception as e:
-            print(f"File creation error: {e}")
+        data = populate_database(create_initial_structure())
+        save_to_disk(data)
     else:
-        print("Loading existing data into memory...")
-        try:
-            with open(DATABASE_FILE, "r") as file:
-                data = json.load(file)
-                
-            # Populate user_registry from file
+        with open(DATABASE_FILE, "r") as file:
+            data = json.load(file)
             for uid, info in data["users"].items():
-                user_registry[uid] = Users(
-                    id=uid, name=info["name"], password=info["password"],
-                    balance=info["balance"], is_admin=info["is_admin"],
-                    employed_by=info["employed_by"]
+                user_registry[uid] = Users.User(
+                    uid, info["name"], info["password"], 
+                    info["balance"], info["is_admin"], info["employed_by"]
                 )
-            
-            # Populate company_registry from file
             for cid, info in data["companies"].items():
-                company_registry[cid] = Companies(
-                    name=info["name"], owner=info["owner"], vault=info["vault"],
-                    employees=info["employees"], salary=info["salary"],
-                    commodity=info["commodity"], production_rate=info["production_rate"]
+                company_registry[cid] = Companies.Company(
+                    info["name"], info["owner"], info["vault"], 
+                    info["employees"], info["salary"], info["commodity"], 
+                    info["production_rate"]
                 )
-        except Exception as e:
-            print(f"Error loading database: {e}")
 
 if __name__ == "__main__":
     init_database()
