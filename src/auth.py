@@ -4,12 +4,13 @@ import os
 import bcrypt
 import random
 import init_db
+from init_db import user_registry  
 
-DATABASE_FILE = "auth.json"
+DATABASE_FILE = "database.json"
 JOB_PROBABILITY = 0.90  
 
 def hash_pw(pw):
-    
+    """Hashes a password using bcrypt."""
     pw_bytes = pw.encode('utf-8')
     s = bcrypt.gensalt()
     h = bcrypt.hashpw(pw_bytes, s)
@@ -18,7 +19,6 @@ def hash_pw(pw):
 def load_data():
     """Reads the database file and returns a dictionary."""
     if not os.path.exists(DATABASE_FILE):
-        # Trigger the one-time generation logic from init_db
         init_db.init_database()
             
     try:
@@ -29,7 +29,7 @@ def load_data():
         sys.exit(1)
 
 def login_auth(data):
-    """Handles login by searching for the username inside the user objects."""
+    """Handles login and returns the corresponding User object from RAM."""
     login_attempts = 0
     max_attempts = 3
     print("\n*******************")
@@ -40,10 +40,10 @@ def login_auth(data):
         username_input = input("Username: ").strip()
         pw_input = input("Password : ").strip()
         
-        # Since keys are IDs, search for the user by their 'name' attribute
         target_id = None
         user_info = None
 
+        # Search for user in the JSON data by the 'name' field
         for uid, info in data.get("users", {}).items():
             if info.get("name") == username_input:
                 target_id = uid
@@ -59,20 +59,20 @@ def login_auth(data):
 
         stored_hash = user_info.get("password", "")
         
-        # Verify password
+        # Verify password (handles bcrypt or plain-text fallback)
         is_valid = False
         try:
-            # Check if it's a bcrypt hash
             is_valid = bcrypt.checkpw(pw_input.encode('utf-8'), stored_hash.encode('utf-8'))
         except (ValueError, AttributeError):
-            # Fallback for plain-text (useful for the initial 'admin' setup)
             is_valid = (pw_input == stored_hash)
 
         if is_valid:
             print("**************************")
             print(f"Logged in as {username_input} (ID: {target_id})")
             print("**************************")
-            return username_input 
+            
+            # Retrieve the object from RAM registry
+            return user_registry.get(target_id) 
         else: 
             login_attempts += 1
             remaining = max_attempts - login_attempts
@@ -82,13 +82,12 @@ def login_auth(data):
     sys.exit(0)
 
 def signup_auth():
-
+    """Prompts for new user credentials and validates availability."""
     print("\n*******************")
     print("      Sign-up      ")
     print("*******************")
 
     data = load_data()
-    # Extract all existing names to prevent duplicates
     existing_names = [info.get("name") for info in data.get("users", {}).values()]
     
     while True:
@@ -110,8 +109,12 @@ def signup_auth():
     return new_name, new_pw
 
 def auth_main():
-    """Main entry point for authentication logic."""
+    """Main entry point for authentication logic. Returns a User Object."""
+    # Ensure database is loaded into RAM before we do anything
+    init_db.init_database()
+    
     while True:
+        # Reload fresh data from disk for each loop iteration
         data = load_data()
         
         print("\n--- Economy Simulator ---")
@@ -121,38 +124,48 @@ def auth_main():
         choice = input("# ")
 
         if choice == "1":
-            return login_auth(data)
+            user_obj = login_auth(data)
+            if user_obj:
+                return user_obj
 
         elif choice == "2":
             new_name, new_pw = signup_auth()
             hashed_pw = hash_pw(new_pw)
             
-            # 1. Generate a new unique ID
+            # Generate new ID
             existing_ids = [int(k) for k in data["users"].keys() if k.isdigit()]
             new_id = str(max(existing_ids) + 1 if existing_ids else 1)
 
-            # 2. Random Job Assignment
+            # Random Job Assignment
             company_ids = list(data.get("companies", {}).keys())
             has_job = random.random() < JOB_PROBABILITY
             assigned_job_id = random.choice(company_ids) if (has_job and company_ids) else None
 
-            # 3. Save the new user via init_db
+            # 1. Update JSON and RAM (init_db.update_data must sync user_registry)
             init_db.update_data(
                 new_id, 
                 name=new_name, 
                 password=hashed_pw, 
                 balance=100, 
                 is_admin=False, 
-                job=assigned_job_id
+                employed_by=assigned_job_id,
+                health=100,
+                energy=10,
+                luxury=5
             )
 
-            # 4. Link the employee to the company if applicable
+            # 2. Handle company linkage
             if assigned_job_id:
                 init_db.add_employee_to_company(assigned_job_id, new_id)
 
-            status = f"employed at {assigned_job_id}" if assigned_job_id else "unemployed"
-            print(f"\nAccount created! Welcome, {new_name}. Your ID is {new_id} ({status}).")
-            return new_name
+            # 3. Retrieve the newly created object from the registry
+            new_user_obj = user_registry.get(new_id)
+            
+            if new_user_obj:
+                print(f"\nAccount created! Welcome, {new_name}.")
+                return new_user_obj
+            else:
+                print("(!) Error: Registry sync failed. Please try logging in.")
 
         else:
             print("Invalid Input. Please enter 1 or 2.")

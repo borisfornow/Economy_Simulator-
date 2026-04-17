@@ -62,6 +62,10 @@ def sim():
             print(f"Energy:  {current_user.energy}")
             print(f"Luxury:  {current_user.luxury}")
             print(f"Job:     {current_user.employed_by}\n")
+        
+        elif cmd == "market":
+            from market import marketdisplay
+            marketdisplay()
         else:
             print(f"Unknown command: '{cmd}'")
 
