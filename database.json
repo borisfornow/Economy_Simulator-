@@ -13,211 +13,211 @@
         "1": {
             "name": "citizen_1",
             "password": "password",
-            "balance": 98,
+            "balance": 65,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 74,
-            "energy": 8,
+            "employed_by": "CO-3",
+            "health": 87,
+            "energy": 10,
             "luxury": 4
         },
         "2": {
             "name": "citizen_2",
             "password": "password",
-            "balance": 59,
+            "balance": 64,
             "is_admin": false,
-            "employed_by": "CO-3",
-            "health": 77,
-            "energy": 8,
-            "luxury": 1
+            "employed_by": "CO-2",
+            "health": 92,
+            "energy": 6,
+            "luxury": 2
         },
         "3": {
             "name": "citizen_3",
             "password": "password",
-            "balance": 74,
+            "balance": 64,
             "is_admin": false,
-            "employed_by": "CO-1",
-            "health": 70,
-            "energy": 10,
-            "luxury": 4
+            "employed_by": "CO-3",
+            "health": 66,
+            "energy": 7,
+            "luxury": 2
         },
         "4": {
             "name": "citizen_4",
             "password": "password",
-            "balance": 71,
+            "balance": 53,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 90,
-            "energy": 4,
+            "employed_by": "CO-3",
+            "health": 79,
+            "energy": 10,
             "luxury": 1
         },
         "5": {
             "name": "citizen_5",
             "password": "password",
-            "balance": 91,
+            "balance": 62,
             "is_admin": false,
-            "employed_by": "CO-3",
-            "health": 100,
-            "energy": 7,
-            "luxury": 3
+            "employed_by": "CO-1",
+            "health": 95,
+            "energy": 8,
+            "luxury": 5
         },
         "6": {
             "name": "citizen_6",
             "password": "password",
-            "balance": 66,
+            "balance": 98,
             "is_admin": false,
-            "employed_by": "CO-1",
-            "health": 96,
-            "energy": 5,
-            "luxury": 5
+            "employed_by": "CO-2",
+            "health": 95,
+            "energy": 10,
+            "luxury": 4
         },
         "7": {
             "name": "citizen_7",
             "password": "password",
-            "balance": 76,
+            "balance": 92,
             "is_admin": false,
             "employed_by": "CO-2",
-            "health": 90,
-            "energy": 8,
-            "luxury": 1
+            "health": 69,
+            "energy": 7,
+            "luxury": 2
         },
         "8": {
             "name": "citizen_8",
             "password": "password",
-            "balance": 80,
+            "balance": 90,
             "is_admin": false,
             "employed_by": "CO-2",
-            "health": 89,
-            "energy": 9,
-            "luxury": 3
+            "health": 74,
+            "energy": 5,
+            "luxury": 2
         },
         "9": {
             "name": "citizen_9",
             "password": "password",
-            "balance": 89,
+            "balance": 51,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 88,
-            "energy": 7,
-            "luxury": 5
+            "employed_by": "CO-1",
+            "health": 87,
+            "energy": 6,
+            "luxury": 4
         },
         "10": {
             "name": "citizen_10",
             "password": "password",
-            "balance": 86,
+            "balance": 73,
             "is_admin": false,
-            "employed_by": "CO-2",
+            "employed_by": "CO-1",
             "health": 69,
             "energy": 8,
-            "luxury": 3
+            "luxury": 1
         },
         "11": {
             "name": "citizen_11",
             "password": "password",
-            "balance": 88,
+            "balance": 79,
             "is_admin": false,
-            "employed_by": null,
-            "health": 100,
-            "energy": 7,
-            "luxury": 3
+            "employed_by": "CO-2",
+            "health": 61,
+            "energy": 4,
+            "luxury": 1
         },
         "12": {
             "name": "citizen_12",
             "password": "password",
-            "balance": 74,
+            "balance": 58,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 100,
-            "energy": 6,
-            "luxury": 4
+            "employed_by": "CO-1",
+            "health": 89,
+            "energy": 8,
+            "luxury": 5
         },
         "13": {
             "name": "citizen_13",
             "password": "password",
-            "balance": 91,
+            "balance": 67,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 93,
-            "energy": 5,
-            "luxury": 4
+            "employed_by": "CO-1",
+            "health": 63,
+            "energy": 8,
+            "luxury": 3
         },
         "14": {
             "name": "citizen_14",
             "password": "password",
-            "balance": 96,
+            "balance": 53,
             "is_admin": false,
             "employed_by": "CO-3",
-            "health": 100,
-            "energy": 10,
-            "luxury": 4
+            "health": 94,
+            "energy": 5,
+            "luxury": 2
         },
         "15": {
             "name": "citizen_15",
             "password": "password",
-            "balance": 51,
+            "balance": 82,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 95,
+            "employed_by": "CO-3",
+            "health": 91,
             "energy": 7,
-            "luxury": 3
+            "luxury": 4
         },
         "16": {
             "name": "citizen_16",
             "password": "password",
-            "balance": 87,
+            "balance": 62,
             "is_admin": false,
-            "employed_by": "CO-1",
-            "health": 82,
-            "energy": 5,
+            "employed_by": "CO-2",
+            "health": 95,
+            "energy": 8,
             "luxury": 2
         },
         "17": {
             "name": "citizen_17",
             "password": "password",
-            "balance": 82,
+            "balance": 81,
             "is_admin": false,
-            "employed_by": "CO-3",
-            "health": 93,
-            "energy": 10,
-            "luxury": 4
+            "employed_by": null,
+            "health": 73,
+            "energy": 4,
+            "luxury": 5
         },
         "18": {
             "name": "citizen_18",
             "password": "password",
-            "balance": 51,
+            "balance": 60,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 95,
-            "energy": 8,
-            "luxury": 3
+            "employed_by": null,
+            "health": 84,
+            "energy": 10,
+            "luxury": 2
         },
         "19": {
             "name": "citizen_19",
             "password": "password",
-            "balance": 89,
+            "balance": 75,
             "is_admin": false,
             "employed_by": "CO-1",
-            "health": 73,
+            "health": 68,
             "energy": 4,
-            "luxury": 4
+            "luxury": 5
         },
         "20": {
             "name": "citizen_20",
             "password": "password",
-            "balance": 62,
+            "balance": 65,
             "is_admin": false,
-            "employed_by": "CO-2",
-            "health": 90,
-            "energy": 6,
-            "luxury": 1
+            "employed_by": "CO-1",
+            "health": 62,
+            "energy": 10,
+            "luxury": 3
         },
         "21": {
             "name": "boris",
-            "password": "$2b$12$hDwZrg86Ic1iTUBQyzsAIea.JS/F7RjITXM71Z.40BTcQteBQomx2",
-            "balance": 100,
+            "password": "$2b$12$e7Wzxh1NNbWr7Mb3BrY3V.TIBmQaYNclO/I4yMBhgh6Rjjjpy5as.",
+            "balance": 50,
             "is_admin": false,
             "employed_by": "CO-3",
             "health": 100,
-            "energy": 10,
+            "energy": 20,
             "luxury": 5
         }
     },
@@ -227,50 +227,84 @@
             "owner": "0",
             "vault": 50000,
             "employees": [
-                "3",
-                "6",
-                "16",
-                "19"
+                "5",
+                "5",
+                "9",
+                "9",
+                "10",
+                "10",
+                "12",
+                "12",
+                "13",
+                "13",
+                "19",
+                "19",
+                "20",
+                "20"
             ],
-            "salary": 64,
-            "commodity": "health",
-            "production_rate": 2
+            "salary": 62,
+            "commodity": "luxury",
+            "production_rate": 1
         },
         "CO-2": {
             "name": "Enterprise_CO-2",
             "owner": "0",
             "vault": 50000,
             "employees": [
-                "1",
-                "4",
+                "2",
+                "2",
+                "6",
+                "6",
+                "7",
                 "7",
                 "8",
-                "9",
-                "10",
-                "12",
-                "13",
-                "15",
-                "18",
-                "20"
+                "8",
+                "11",
+                "11",
+                "16",
+                "16"
             ],
-            "salary": 60,
-            "commodity": "luxury",
-            "production_rate": 5
+            "salary": 48,
+            "commodity": "health",
+            "production_rate": 2
         },
         "CO-3": {
             "name": "Enterprise_CO-3",
             "owner": "0",
-            "vault": 50000,
+            "vault": 50050,
             "employees": [
-                "2",
-                "5",
+                "1",
+                "1",
+                "3",
+                "3",
+                "4",
+                "4",
                 "14",
-                "17",
+                "14",
+                "15",
+                "15",
                 "21"
             ],
-            "salary": 79,
+            "salary": 69,
             "commodity": "energy",
-            "production_rate": 1
+            "production_rate": 4
+        }
+    },
+    "products": {
+        "luxury": {
+            "name": "Luxury",
+            "producer": "CO-1",
+            "price": 50
+        },
+        "health": {
+            "name": "Health",
+            "producer": "CO-2",
+            "price": 50
+        },
+        "energy": {
+            "name": "Energy",
+            "producer": "CO-3",
+            "price": 50
         }
     },
     "bank": {

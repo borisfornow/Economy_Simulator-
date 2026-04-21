@@ -48,6 +48,8 @@ def sim():
 
         if cmd in ["stop", "exit", "quit"]:
             print("Saving data and exiting...")
+            init_db.sync_registry_to_json()
+            init_db.save_product_registry()
             running = False
         elif cmd == "help":
             print("\n--- Available Commands ---")
@@ -66,6 +68,12 @@ def sim():
         elif cmd == "market":
             from market import marketdisplay
             marketdisplay()
+
+        elif cmd.startswith("buy "):
+            _, product_name = cmd.split(" ", 1)
+            from market import buy_product
+            buy_product(current_user.id, product_name)
+            
         else:
             print(f"Unknown command: '{cmd}'")
 

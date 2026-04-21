@@ -1,13 +1,10 @@
 import sys
-import json
-import os
 import bcrypt
 import random
 import init_db
-from init_db import user_registry  
+from init_db import user_registry
 
-DATABASE_FILE = "database.json"
-JOB_PROBABILITY = 0.90  
+JOB_PROBABILITY = 0.90
 
 def hash_pw(pw):
     """Hashes a password using bcrypt."""
@@ -17,16 +14,9 @@ def hash_pw(pw):
     return h.decode('utf-8')
 
 def load_data():
-    """Reads the database file and returns a dictionary."""
-    if not os.path.exists(DATABASE_FILE):
-        init_db.init_database()
-            
-    try:
-        with open(DATABASE_FILE, "r") as file:
-            return json.load(file)
-    except (json.JSONDecodeError, FileNotFoundError):
-        print(f"Error: {DATABASE_FILE} is missing or corrupted.")
-        sys.exit(1)
+    """Returns the current database state from init_db."""
+    init_db.init_database()
+    return init_db.load_database()
 
 def login_auth(data):
     """Handles login and returns the corresponding User object from RAM."""
