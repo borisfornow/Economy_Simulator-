@@ -1,0 +1,1 @@
+"""Economy Simulator package."""

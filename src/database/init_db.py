@@ -1,11 +1,9 @@
 """Main database initialization module. Loads registries from disk."""
 
-import Users
-import Companies
-import Banks
-from persistence import load_database, save_to_disk
-from db_population import populate_database
-from sync import sync_product_registry, update_data as _update_data, update_company_data as _update_company_data, add_employee_to_company as _add_employee_to_company
+from ..models import Users, Companies
+from .persistence import load_database, save_to_disk, persist_users, persist_companies, persist_products, sync_registry_to_json as _sync_registry, save_product_registry as _save_products, remove_user_from_data as _remove_user
+from .db_population import populate_database
+from ..controllers.sync import sync_product_registry, update_data as _update_data, update_company_data as _update_company_data, add_employee_to_company as _add_employee_to_company
 
 # Global registries for quick in-memory access
 user_registry = {}
@@ -28,6 +26,21 @@ def update_company_data(company_id, **kwargs):
 def add_employee_to_company(company_id, user_id):
     """Wrapper for sync.add_employee_to_company with global registries."""
     _add_employee_to_company(company_registry, user_id, company_id)
+
+
+def sync_registry_to_json():
+    """Sync user and company registries to JSON."""
+    _sync_registry(user_registry, company_registry)
+
+
+def save_product_registry():
+    """Sync product registry to JSON."""
+    _save_products(product_registry)
+
+
+def remove_user_from_data(user_id):
+    """Remove a user from the JSON data."""
+    _remove_user(user_id)
 
 
 # --- INITIALIZATION ---

@@ -1,7 +1,7 @@
 import sys
-import auth
-import init_db
-import sim
+from .database import init_db
+from .views import sim
+
 
 def main():
     # 1. Ensure the environment is ready

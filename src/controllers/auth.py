@@ -1,8 +1,8 @@
 import sys
 import bcrypt
 import random
-import init_db
-from init_db import user_registry
+from ..database import init_db
+from ..database.init_db import user_registry
 
 JOB_PROBABILITY = 0.90
 

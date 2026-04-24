@@ -1,7 +1,6 @@
-import auth
-import init_db
-import Users, Companies, Banks
-from init_db import user_registry, company_registry
+from ..controllers import auth
+from ..database import init_db
+from ..database.init_db import user_registry, company_registry
 
 def sim():
     # 1. Initialize data structures
@@ -50,6 +49,7 @@ def sim():
             print("Saving data and exiting...")
             init_db.sync_registry_to_json()
             init_db.save_product_registry()
+            
             running = False
         elif cmd == "help":
             print("\n--- Available Commands ---")
@@ -66,12 +66,12 @@ def sim():
             print(f"Job:     {current_user.employed_by}\n")
         
         elif cmd == "market":
-            from market import marketdisplay
+            from .market import marketdisplay
             marketdisplay()
 
         elif cmd.startswith("buy "):
             _, product_name = cmd.split(" ", 1)
-            from market import buy_product
+            from .market import buy_product
             buy_product(current_user.id, product_name)
             
         else:

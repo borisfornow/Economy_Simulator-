@@ -1,4 +1,4 @@
-from init_db import product_registry, user_registry, update_data, company_registry, update_company_data, sync_product_registry
+from ..database.init_db import product_registry, user_registry, update_data, company_registry, update_company_data, sync_product_registry
 
 
 def effect_of_buying_on_company(product_name, price):
